@@ -48,4 +48,6 @@ to see all running services => docker ps
 to start service => docker run -d --name redis-server -p 6379:6379 redis
 
 => to run api hit this
+http://localhost:5001/api/auth/register
+and for api gateway try this
 http://localhost:3000/v1/auth/register

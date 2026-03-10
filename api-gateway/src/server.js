@@ -12,7 +12,7 @@ import proxy from "express-http-proxy";
 import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 const redisClient = new Redis(process.env.REDIS_URL);
 

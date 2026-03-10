@@ -13,7 +13,7 @@ import routes from "./routes/identity-service.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5001;
 
 mongoose
   .connect(process.env.MONGODB_URL)
