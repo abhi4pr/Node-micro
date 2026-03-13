@@ -2,6 +2,13 @@ import logger from "../utils/logger.js";
 import Post from "../models/Post.js";
 import { validateCreatePost } from "../utils/validation.js";
 
+async function invalidatePostCache(req, input) {
+  const keys = await req.redisClient.keys("posts:*");
+  if (keys.length > 0) {
+    await req.redisClient.del(keys);
+  }
+}
+
 export const createPost = async (req, res) => {
   logger.info("create post api hit ...");
   try {
@@ -21,6 +28,7 @@ export const createPost = async (req, res) => {
       mediaIds: mediaIds || [],
     });
     await newlyCreatedPost.save();
+    await invalidatePostCache(req, newlyCreatedPost._id.toString());
     logger.info("post created success", newlyCreatedPost);
     res.status(201).json({
       success: true,
@@ -37,6 +45,27 @@ export const createPost = async (req, res) => {
 
 export const getAllPosts = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const startIndex = (page - 1) * limit;
+    const cacheKey = `posts:${page}:${limit}`;
+    const cachedPosts = await req.redisClient.get(cacheKey);
+    if (cachedPosts) {
+      return res.json(JSON.parse(cachedPosts));
+    }
+    const posts = await Post.find({})
+      .sort({ createdAt: -1 })
+      .skip(startIndex)
+      .limit(limit);
+    const totalNoOfPosts = await Post.countDocuments();
+    const result = {
+      posts,
+      currentPage: page,
+      totalPages: Math.ceil(totalNoOfPosts / limit),
+      totalPosts: totalNoOfPosts,
+    };
+    await req.redisClient.setex(cacheKey, 300, JSON.stringify(result));
+    res.json(result);
   } catch (e) {
     logger.error("error getting post lists", e);
     res.status(500).json({
@@ -48,6 +77,25 @@ export const getAllPosts = async (req, res) => {
 
 export const getPost = async (req, res) => {
   try {
+    const postId = req.params.id;
+    const cacheKey = `post:${postId}`;
+    const cachedPost = await req.redisClient.get(cacheKey);
+    if (cachedPost) {
+      return res.json(JSON.parse(cachedPost));
+    }
+    const singlePostDetailsById = await Post.findById(postId);
+    if (!singlePostDetailsById) {
+      return res.status(404).json({
+        success: false,
+        message: "post not found",
+      });
+    }
+    await req.redisClient.setex(
+      cachedPost,
+      3600,
+      JSON.stringify(singlePostDetailsById),
+    );
+    res.json(singlePostDetailsById);
   } catch (e) {
     logger.error("error getting post by id", e);
     res.status(500).json({
