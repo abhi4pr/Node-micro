@@ -5,11 +5,11 @@ import helmet from "helmet";
 import cors from "cors";
 import Redis from "ioredis";
 import rateLimit from "express-rate-limit";
-
 import RedisStore from "rate-limit-redis";
 import logger from "./utils/logger.js";
 import proxy from "express-http-proxy";
 import errorHandler from "./middleware/errorHandler.js";
+import validateToken from "./middleware/authMiddleware.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -72,6 +72,25 @@ app.use(
   }),
 );
 
+app.use(
+  "/v1/posts",
+  validateToken,
+  proxy(process.env.POST_SERVICE_URL, {
+    ...proxyOptions,
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+      proxyReqOpts.headers["Content-Type"] = "application/json";
+      proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+      return proxyReqOpts;
+    },
+    userResDecorator: (proxyRes, proxyResData, useReq, userRes) => {
+      logger.info(
+        `Response received from post service: ${proxyRes.statusCode}`,
+      );
+      return proxyResData;
+    },
+  }),
+);
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {
@@ -79,5 +98,6 @@ app.listen(PORT, () => {
   logger.info(
     `identity service running on ${process.env.IDENTITY_SERVICE_URL}`,
   );
+  logger.info(`post service running on ${process.env.POST_SERVICE_URL}`);
   logger.info(`Redis url ${process.env.REDIS_URL}`);
 });

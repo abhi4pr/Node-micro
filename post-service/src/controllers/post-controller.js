@@ -1,8 +1,19 @@
 import logger from "../utils/logger.js";
 import Post from "../models/Post.js";
+import { validateCreatePost } from "../utils/validation.js";
 
 export const createPost = async (req, res) => {
+  logger.info("create post api hit ...");
   try {
+    const { error } = validateCreatePost(req.body);
+    if (error) {
+      logger.warn("validation error", error.details[0].message);
+      return res.status(400).json({
+        success: false,
+        message: error.details[0].message,
+      });
+    }
+
     const { content, mediaIds } = req.body;
     const newlyCreatedPost = new Post({
       user: req.user.userId,
@@ -12,7 +23,7 @@ export const createPost = async (req, res) => {
     await newlyCreatedPost.save();
     logger.info("post created success", newlyCreatedPost);
     res.status(201).json({
-      success: false,
+      success: true,
       message: "post created successfully",
     });
   } catch (e) {

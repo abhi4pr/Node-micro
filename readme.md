@@ -51,3 +51,7 @@ to start service => docker run -d --name redis-server -p 6379:6379 redis
 http://localhost:5001/api/auth/register
 and for api gateway try this
 http://localhost:3000/v1/auth/register
+
+for post creation api hit this
+http://localhost:5000/v1/posts/create-post
+also pass access_token in auth
