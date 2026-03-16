@@ -1,7 +1,8 @@
 {
   "name": "media-service",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/server.js",

@@ -1,5 +1,7 @@
-import { cloudinary, v2 } from "cloudinary";
+import pkg from "cloudinary";
 import logger from "../utils/logger.js";
+
+const { v2: cloudinary } = pkg;
 
 cloudinary.config({
   cloud_name: process.env.cloud_name,
