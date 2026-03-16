@@ -3,6 +3,8 @@ import Post from "../models/Post.js";
 import { validateCreatePost } from "../utils/validation.js";
 
 async function invalidatePostCache(req, input) {
+  const cachedKey = `post:${input}`;
+  await req.redisClient.del(cachedKey);
   const keys = await req.redisClient.keys("posts:*");
   if (keys.length > 0) {
     await req.redisClient.del(keys);
@@ -107,6 +109,21 @@ export const getPost = async (req, res) => {
 
 export const deletePost = async (req, res) => {
   try {
+    const post = await Post.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user.userId,
+    });
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: "post not found",
+      });
+    }
+    await invalidatePostCache(req, req.params.id);
+    res.json({
+      message: "post deleted success",
+      success: true,
+    });
   } catch (e) {
     logger.error("error deleting post by id", e);
     res.status(500).json({

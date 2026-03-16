@@ -11,6 +11,8 @@ const router = express();
 
 router.use(authenticateRequest);
 router.post("/create-post", createPost);
-router.get("/posts", getAllPosts);
+router.get("/all-posts", getAllPosts);
+router.get("/:id", getPost);
+router.delete("/:id", deletePost);
 
 export default router;
