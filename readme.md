@@ -75,3 +75,5 @@ docker start rabbitmq
 
 =>
 we can access the rabbitmq link using http://localhost://15672 but for env it will be amqp://localhost:5672
+
+=> we just need to create rabbitmq connection in separate file and call that connection in server.js file

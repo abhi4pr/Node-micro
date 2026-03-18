@@ -42,3 +42,16 @@ export const uploadMedia = async (req, res) => {
     });
   }
 };
+
+export const getAllMedias = async (req, res) => {
+  try {
+    const results = await Media.find({});
+    res.json({ results });
+  } catch (e) {
+    logger.error("error getting all media files", e);
+    res.status(500).json({
+      success: false,
+      message: "error getting all media files",
+    });
+  }
+};
