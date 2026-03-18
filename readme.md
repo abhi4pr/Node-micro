@@ -47,6 +47,8 @@ to see all running services => docker ps
 =>
 to start service => docker run -d --name redis-server -p 6379:6379 redis
 
+=> for each service we are making need to map the port within api gateway
+
 => to run api hit this
 http://localhost:5001/api/auth/register
 and for api gateway try this
@@ -58,3 +60,18 @@ also pass access_token in auth
 
 for mediaupload api,
 http://localhost:5000/v1/media/upload
+
+=>
+erlang is req to run rabbitmq, and rabbitmq is required to run amqb.
+
+=> to install rabbitmq in docker
+docker run -d \
+ --name rabbitmq \
+ -p 5672:5672 \
+ -p 15672:15672 \
+ rabbitmq:3-management
+
+docker start rabbitmq
+
+=>
+we can access the rabbitmq link using http://localhost://15672 but for env it will be amqp://localhost:5672
