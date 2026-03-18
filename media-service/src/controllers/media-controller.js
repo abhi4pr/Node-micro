@@ -12,9 +12,9 @@ export const uploadMedia = async (req, res) => {
         success: false,
       });
     }
-    const { originalName, mimeType, buffer } = req.file;
+    const { originalname, mimetype, buffer } = req.file;
     const userId = req.user.userId;
-    logger.info(`file details, name:${originalName}, Type:${mimeType}`);
+    logger.info(`file details, name:${originalname}, Type:${mimetype}`);
     logger.info("uploading file to cloundinary");
     const cloundinaryUploadResult = await uploadMediaToCloudinary(req.file);
     logger.info(
@@ -22,8 +22,8 @@ export const uploadMedia = async (req, res) => {
     );
     const newlyCreatedMedia = new Media({
       public_id: cloundinaryUploadResult.public_id,
-      originalName,
-      mimeType,
+      originalName: originalname,
+      mimeType: mimetype,
       url: cloundinaryUploadResult.secure_url,
       userId,
     });

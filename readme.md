@@ -55,3 +55,6 @@ http://localhost:3000/v1/auth/register
 for post creation api hit this
 http://localhost:5000/v1/posts/create-post
 also pass access_token in auth
+
+for mediaupload api,
+http://localhost:5000/v1/media/upload
