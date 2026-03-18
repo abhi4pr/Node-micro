@@ -1,6 +1,7 @@
 import logger from "../utils/logger.js";
 import Post from "../models/Post.js";
 import { validateCreatePost } from "../utils/validation.js";
+import { publishEvent } from "../utils/rabbitmq.js";
 
 async function invalidatePostCache(req, input) {
   const cachedKey = `post:${input}`;
@@ -119,6 +120,11 @@ export const deletePost = async (req, res) => {
         message: "post not found",
       });
     }
+    await publishEvent("post.deleted", {
+      postId: post._id.toString(),
+      userId: req.user.userId,
+      mediaIds: post.mediaIds,
+    });
     await invalidatePostCache(req, req.params.id);
     res.json({
       message: "post deleted success",
