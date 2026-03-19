@@ -9,6 +9,7 @@ import errorHandler from "./middleware/errorHandler.js";
 import logger from "./utils/logger.js";
 import { connectToRabbitMQ, consumeEvent } from "./utils/rabbitmq.js";
 import searchRoutes from "./routes/search-routes.js";
+import { handlePostCreated } from "./eventHandlers/search-event-handlers.js";
 
 const app = express();
 const PORT = process.env.PORT || 5004;
@@ -35,9 +36,9 @@ app.use(errorHandler);
 async function startServer() {
   try {
     await connectToRabbitMQ();
-    await consumeEvent("post.deleted", handlePostDeleted);
+    await consumeEvent("post.created", handlePostCreated);
     app.listen(PORT, () => {
-      logger.info(`media service running on ${PORT}`);
+      logger.info(`search service running on ${PORT}`);
     });
   } catch (e) {
     logger.error("failed to connect", e);
@@ -46,10 +47,6 @@ async function startServer() {
 }
 
 startServer();
-
-// app.listen(PORT, () => {
-//   logger.info(`media service running on ${PORT}`);
-// });
 
 process.on("unhandledRejection", (reason, promise) => {
   logger.error("unhandled rejection at", promise, "reason", reason);

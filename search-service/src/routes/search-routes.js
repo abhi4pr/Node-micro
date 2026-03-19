@@ -1,5 +1,5 @@
 import express from "express";
-import multer from "multer";
+
 import { searchPostController } from "../controllers/search-controller.js   ";
 import authenticateRequest from "../middleware/authMiddleware.js";
 import logger from "../utils/logger.js";
