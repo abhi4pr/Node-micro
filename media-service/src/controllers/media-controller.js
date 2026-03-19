@@ -21,7 +21,7 @@ export const uploadMedia = async (req, res) => {
       `cloudinary upload success, public-id is:${cloundinaryUploadResult.public_id}`,
     );
     const newlyCreatedMedia = new Media({
-      public_id: cloundinaryUploadResult.public_id,
+      publicId: cloundinaryUploadResult.public_id,
       originalName: originalname,
       mimeType: mimetype,
       url: cloundinaryUploadResult.secure_url,

@@ -4,7 +4,7 @@ const mediaSchema = new mongoose.Schema(
   {
     publicId: {
       type: String,
-      required: false,
+      required: true,
     },
     originalName: {
       type: String,
