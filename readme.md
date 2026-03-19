@@ -62,6 +62,10 @@ for mediaupload api,
 http://localhost:5000/v1/media/upload
 
 =>
+for search use
+http://localhost:5000/v1/search/posts?query=sometext
+
+=>
 erlang is req to run rabbitmq, and rabbitmq is required to run amqb.
 
 => to install rabbitmq in docker
