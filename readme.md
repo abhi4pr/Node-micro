@@ -82,3 +82,10 @@ we can access the rabbitmq link using http://localhost://15672 but for env it wi
 
 => while deleting post, we also have to delete the media associated with that post (which is in other service), so we will connect rabbitmq & call in server.js file and create a publish event(with a unique key) which call in delete post api,
 Now in media service, connect rabbitmq & call in server.js file and create a consume event(with that unique key and db queries) which call in only in server.js
+
+=>
+Dockerfile is for each services, while docker-compose.yml is for gather all services in one.
+
+=>
+docker-compose build for making build of all services
+docker-componse up for run for all services
